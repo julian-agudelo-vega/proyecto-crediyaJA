@@ -43,15 +43,15 @@ import java.time.LocalDate;
 import java.util.NoSuchElementException;
 
 /**
- * Punto de entrada. Pregunta dónde se guardarán los datos y si se cargarán
- * datos de ejemplo, entonces arma la aplicación conectando repositorios, servicios y menús.
+ * Punto de entrada. Pregunta dnde se guardarn los datos y si se cargarn
+ * datos de ejemplo, entonces arma la aplicacin conectando repositorios, servicios y menús.
  */
 public class Main {
 
     /** Carpeta (relativa a donde se ejecuta el programa) con los archivos .txt. */
     private static final Path CARPETA_DATOS = Path.of("data");
 
-    /** Archivo con los datos de conexión a MySQL (no se sube a GitHub). */
+    /** Archivo con los datos de conexin a MySQL (no se sube a GitHub). */
     private static final Path ARCHIVO_CONFIG = Path.of("config.properties");
 
     public static void main(String[] args) {
@@ -66,94 +66,41 @@ public class Main {
 
     private static MenuPrincipal elegirPersistencia(Consola consola) {
         while (true) {
-            System.out.println("\n¿Dónde desea guardar los datos?");
+            System.out.println("\nDnde desea guardar los datos?");
             System.out.println("1. Archivos de texto (carpeta data/)");
             System.out.println("2. Base de datos MySQL");
-            int opcion = consola.leerEntero("Opción: ");
+            int opcion = consola.leerEntero("Opcion: ");
             if (opcion == 1) {
-                boolean ejemplo = preguntarDatosEjemplo(consola);
-                return crearConArchivos(consola, ejemplo);
+                // Modo archivo: repositorios vacíos (usuario registra desde el menú)
+                return crearConArchivos(consola, false);
             }
             if (opcion == 2) {
                 try {
-                    boolean ejemplo = preguntarDatosEjemplo(consola);
-                    return crearConMySql(consola, ejemplo);
+                    return crearConMySql(consola, true); // Siempre pregunta si quiere datos de ejemplo
                 } catch (PersistenciaException e) {
                     System.out.println("No se pudo usar MySQL: " + e.getMessage());
                 }
             } else {
-                System.out.println("Opción inválida.");
+                System.out.println("Opcion invalida.");
             }
         }
     }
 
     private static boolean preguntarDatosEjemplo(Consola consola) {
-        System.out.println("¿Cargar datos de ejemplo?");
-        System.out.println("1. Sí");
+        System.out.println("Cargar datos de ejemplo?");
+        System.out.println("1. Si");
         System.out.println("2. No");
-        int opcion = consola.leerEntero("Opción: ");
+        int opcion = consola.leerEntero("Opcion: ");
         return opcion == 1;
     }
 
     private static MenuPrincipal crearConArchivos(Consola consola, boolean cargarEjemplo) {
-        ClienteRepository clientes;
-        EmpleadoRepository empleados;
-        PagoRepository pagos;
-        PrestamoRepository prestamos;
-
-        if (cargarEjemplo) {
-            // Cargar datos de ejemplo en modo archivo
-            Path dir = Path.of("data_example");
-            ClienteRepository tempClientes = new ClienteArchivoRepository(dir);
-            EmpleadoRepository tempEmpleados = new EmpleadoArchivoRepository(dir);
-            PagoRepository tempPagos = new PagoArchivoRepository(dir);
-            PrestamoRepository tempPrestamos = new PrestamoArchivoRepository(dir,
-                    new ArmadorPrestamo(tempClientes, tempEmpleados, tempPagos));
-
-            // Registrar datos de ejemplo en repositorios temporales
-            cargarDatosPrueba(tempClientes, tempEmpleados, tempPrestamos, tempPagos);
-
-            // Crear repositorios definitivos y copiar datos
-            clientes = new ClienteArchivoRepository(CARPETA_DATOS);
-            empleados = new EmpleadoArchivoRepository(CARPETA_DATOS);
-            pagos = new PagoArchivoRepository(CARPETA_DATOS);
-            prestamos = new PrestamoArchivoRepository(CARPETA_DATOS,
-                    new ArmadorPrestamo(clientes, empleados, pagos));
-
-            // Copiar clientes
-            for (Cliente c : tempClientes.listarTodos()) {
-                clientes.guardar(new Cliente(c.getId(), c.getNombre(), c.getDocumento(),
-                        c.getCorreo(), c.getTelefono()));
-            }
-
-            // Copiar empleados
-            for (Empleado e : tempEmpleados.listarTodos()) {
-                empleados.guardar(new Empleado(e.getId(), e.getNombre(), e.getDocumento(),
-                        e.getRol(), e.getCorreo(), e.getSalario()));
-            }
-
-            // Copiar préstamos usando armador para reconstruir cliente/empleado/pagos
-            for (Prestamo p : tempPrestamos.listarTodos()) {
-                prestamos.guardar(p);
-            }
-
-            // Copiar pagos
-            for (Pago pg : tempPagos.listarPorPrestamo(new Prestamo(0, null, null, BigDecimal.ZERO, BigDecimal.ZERO, 0, null))) {
-                pagos.guardar(new Pago(pg.getIdPago(), pg.getNumeroComprobante(), pg.getFechaPago(),
-                        pg.getMontoPagado(), pg.getPrestamo()));
-            }
-        } else {
-            ClienteRepository clientesTemp = new ClienteArchivoRepository(CARPETA_DATOS);
-            EmpleadoRepository empleadosTemp = new EmpleadoArchivoRepository(CARPETA_DATOS);
-            PagoRepository pagosTemp = new PagoArchivoRepository(CARPETA_DATOS);
-            PrestamoRepository prestamosTemp = new PrestamoArchivoRepository(CARPETA_DATOS,
-                    new ArmadorPrestamo(clientesTemp, empleadosTemp, pagosTemp));
-            clientes = new ClienteArchivoRepository(CARPETA_DATOS);
-            empleados = new EmpleadoArchivoRepository(CARPETA_DATOS);
-            pagos = new PagoArchivoRepository(CARPETA_DATOS);
-            prestamos = new PrestamoArchivoRepository(CARPETA_DATOS,
-                    new ArmadorPrestamo(clientes, empleados, pagos));
-        }
+        // Modo archivo: repositorios vacíos (el usuario registra desde los menús)
+        ClienteRepository clientes = new ClienteArchivoRepository(CARPETA_DATOS);
+        EmpleadoRepository empleados = new EmpleadoArchivoRepository(CARPETA_DATOS);
+        PagoRepository pagos = new PagoArchivoRepository(CARPETA_DATOS);
+        PrestamoRepository prestamos = new PrestamoArchivoRepository(CARPETA_DATOS,
+                new ArmadorPrestamo(clientes, empleados, pagos));
 
         return ensamblar("archivos de texto (" + CARPETA_DATOS + "/)", consola, clientes, empleados, prestamos, pagos);
     }
@@ -162,33 +109,28 @@ public class Main {
         ConexionBD conexion = ConexionBD.desdeArchivo(ARCHIVO_CONFIG);
         conexion.probarConexion();
 
-        ClienteRepository clientes;
-        EmpleadoRepository empleados;
-        PagoRepository pagos;
-        PrestamoRepository prestamos;
+        // Inicializar repositorios
+        ClienteRepository clientes = new ClienteJdbcRepository(conexion);
+        EmpleadoRepository empleados = new EmpleadoJdbcRepository(conexion);
+        PagoRepository pagos = new PagoJdbcRepository(conexion);
+        PrestamoRepository prestamos = new PrestamoJdbcRepository(conexion,
+                new ArmadorPrestamo(clientes, empleados, pagos));
 
         if (cargarEjemplo) {
-            insertarDatosEjemploMySQL(clientes, empleados, pagos, prestamos);
-        } else {
-            // Modo sin datos de ejemplo: repositorios vacíos (se crean al instante)
-            clientes = new ClienteJdbcRepository(conexion);
-            empleados = new EmpleadoJdbcRepository(conexion);
-            pagos = new PagoJdbcRepository(conexion);
-            prestamos = new PrestamoJdbcRepository(conexion,
-                    new ArmadorPrestamo(clientes, empleados, pagos));
+            insertarDatosEjemploMySQL();
         }
 
         return ensamblar("base de datos MySQL", consola, clientes, empleados, prestamos, pagos);
     }
 
-    private static void insertarDatosEjemploMySQL(ClienteRepository clientes,
-                                                   EmpleadoRepository empleados,
-                                                   PagoRepository pagos,
-                                                   PrestamoRepository prestamos) throws PersistenciaException {
-        // Usamos sentencias SQL directas para insertar datos de ejemplo
-        // Esto evita problemas de validación de objetos y mapeo complejo
+private static void insertarDatosEjemploMySQL() throws PersistenciaException {
         try (Connection con = ConexionBD.desdeArchivo(ARCHIVO_CONFIG).obtenerConexion()) {
             try (Statement stmt = con.createStatement()) {
+                stmt.executeUpdate("DELETE FROM pagos");
+                stmt.executeUpdate("DELETE FROM prestamos");
+                stmt.executeUpdate("DELETE FROM clientes");
+                stmt.executeUpdate("DELETE FROM empleados");
+
                 // Insertar datos de ejemplo directamente en las tablas
                 // Orden: empleados, clientes, prestamos, pagos
 
@@ -213,15 +155,15 @@ public class Main {
 
                 // 4. Pagos
                 // Préstamo A: 2 pagos (366,666.67 y 366,666.66)
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto) VALUES (1, 1, '2026-02-05', 366666.67)");
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto) VALUES (2, 1, '2026-03-05', 366666.66)");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (1, 1, '2026-02-05', 366666.67, 'NC-001')");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (2, 1, '2026-03-05', 366666.66, 'NC-002')");
 
                 // Préstamo B: sin pagos (no insertamos registros en la tabla pagos para ese préstamo)
 
                 // Préstamo C: 3 pagos completos (valores que suman 1,000,000)
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto) VALUES (3, 3, '2026-04-05', 330000.00)");
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto) VALUES (4, 3, '2026-05-05', 330000.00)");
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto) VALUES (5, 3, '2026-06-05', 340000.00)");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (3, 3, '2026-04-05', 330000.00, 'NC-003')");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (4, 3, '2026-05-05', 330000.00, 'NC-004')");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (5, 3, '2026-06-05', 340000.00, 'NC-005')");
 
                 System.out.println("Datos de ejemplo cargados exitosamente en MySQL.");
             }
@@ -247,4 +189,3 @@ public class Main {
                 new MenuPagos(pagoService, prestamoService, consola),
                 new MenuReportes(reporteService, consola));
 }}
-    /** Carga datos de prueba en los repositorios temporales de archivo. */

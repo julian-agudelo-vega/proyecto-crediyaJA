@@ -1,0 +1,15 @@
+﻿                                           PagoRepository pagos) {
+        EmpleadoService empleadoService = new EmpleadoService(empleados);
+        ClienteService clienteService = new ClienteService(clientes);
+        PrestamoService prestamoService = new PrestamoService(prestamos, clientes, empleados);
+        PagoService pagoService = new PagoService(prestamos, pagos);
+        ReporteService reporteService = new ReporteService(prestamos);
+
+        return new MenuPrincipal(descripcion, consola,
+                new MenuEmpleados(empleadoService, consola),
+                new MenuClientes(clienteService, prestamoService, consola),
+                new MenuPrestamos(prestamoService, clienteService, empleadoService, consola),
+                new MenuPagos(pagoService, prestamoService, consola),
+                new MenuReportes(reporteService, consola));
+}}
+    // Modo sin datos de ejemplo: repositorios vacíos (se crean al instante)
