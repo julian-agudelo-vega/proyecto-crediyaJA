@@ -1,0 +1,14 @@
+# Plantilla de configuración de MySQL para CrediYa.
+#
+# PASOS:
+#   1. Copia este archivo y llama a la copia  config.properties  (en la raíz del proyecto).
+#   2. Escribe tu contraseña real de MySQL en db.password.
+#   3. NUNCA subas config.properties a GitHub (ya está en .gitignore).
+#      Este archivo .example sí se sube, porque NO tiene contraseñas reales.
+#
+# Si tu contraseña contiene el carácter \ (barra invertida), escríbelo doble: \\
+
+# Servidor local, puerto 3306, base de datos crediya_db
+db.url=jdbc:mysql://localhost:3306/crediya_db
+db.user=root
+db.password=ESCRIBA_AQUI_SU_CONTRASENA

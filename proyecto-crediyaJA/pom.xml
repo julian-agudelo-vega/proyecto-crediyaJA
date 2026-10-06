@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.julianagudelo</groupId>
+    <artifactId>proyecto-crediyaJA</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>CrediYa S.A.S.</name>
+    <description>Sistema de consola para gestionar préstamos y cobros de cartera</description>
+
+    <properties>
+        <!-- El código usa solo características de Java 21 o anteriores, así que compila
+             sin problema con tu JDK 26. Si quieres, puedes cambiar este valor a 26. -->
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Driver JDBC de MySQL (compatible con MySQL Server 8.0).
+             Si IntelliJ no logra descargar esta versión, mira la sección
+             "Si Maven no encuentra el Connector/J" del README. -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.7.0</version>
+        </dependency>
+    </dependencies>
+</project>

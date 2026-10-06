@@ -1,0 +1,17 @@
+# --- Credenciales: NUNCA subir a GitHub ---
+config.properties
+
+# --- Datos generados al ejecutar (pueden contener datos personales de clientes) ---
+data/
+
+# --- Compilación de Maven ---
+target/
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iml
+out/
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
