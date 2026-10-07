@@ -42,10 +42,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
 
-/**
- * Punto de entrada. Pregunta dnde se guardarn los datos y si se cargarn
- * datos de ejemplo, entonces arma la aplicacin conectando repositorios, servicios y menús.
- */
 public class Main {
 
     /** Carpeta (relativa a donde se ejecuta el programa) con los archivos .txt. */
