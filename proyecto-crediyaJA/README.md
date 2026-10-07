@@ -205,3 +205,22 @@ Los datos de conexión salen de `config.properties`.
 
 - Diagrama UML: [`docs/uml-clases.md`](docs/uml-clases.md)
 - Subir el proyecto a GitHub: [`docs/GITHUB.md`](docs/GITHUB.md)
+
+## ¿Qué se hizo en esta sesión?
+
+Se implementó la carga de datos de ejemplo para persistencia MySQL, que anteriormente mostraba el mensaje **"Carga de datos de ejemplo para MySQL no implementada en esta versión."**
+
+Ahora el sistema:
+
+1. **Inserta datos automáticamente** al elegir MySQL y aceptar datos de ejemplo
+2. **Incluye 2 empleados**: María González (Gerente, salario $5,000,000) y Carlos Rodríguez (Asesor, salario $3,000,000)
+3. **Incluye 3 clientes**: Ana Martínez, Pedro Sánchez, Laura Gómez
+4. **Incluye 3 préstamos** con diferentes estados:
+   - Préstamo A: $1,000,000, 3 cuotas, PENDIENTE (2 pagos realizados)
+   - Préstamo B: $600,000, 6 cuotas, PENDIENTE (0 pagos)
+   - Préstamo C: $900,000, 3 cuotas, PAGADO (3 pagos completos)
+5. **Incluye 5 pagos** asociados a los préstamos con sus respectivos comprobantes
+6. **Utiliza sentencias SQL directas** con `DELETE FROM` al inicio para evitar errores de entradas duplicadas
+7. **Muestra el mensaje**: "Datos de ejemplo cargados exitosamente en MySQL."
+
+El flujo es: ejecutar programa → elegir "2. Base de datos MySQL" → elegir "1. Sí" a datos de ejemplo → ver mensaje de éxito → acceder al menú principal con todas las opciones (Empleados, Clientes, Préstamos, Pagos, Reportes).

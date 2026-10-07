@@ -322,6 +322,13 @@ public class PruebasCrediYa {
         verificar("activos: A, B y D (C está pagado)", ids(activos).equals(List.of(a.getId(), b.getId(), d.getId())));
         List<Prestamo> vencidos = reportes.prestamosVencidos(hoy);
         verificar("vencidos al 2026-06-15: solo A", ids(vencidos).equals(List.of(a.getId())));
+        GestorPrestamos gestor = new GestorPrestamos(prestamos);
+        verificar("gestor carga los 4 préstamos de prueba", gestor.cargarDatosPrestamos().size() == 4);
+        verificar("gestor lista los préstamos pendientes A, B y D",
+                ids(gestor.listarPrestamosActivos()).equals(List.of(a.getId(), b.getId(), d.getId())));
+        verificar("gestor lista como vencido solo el préstamo A al 2026-06-15",
+                ids(gestor.listarPrestamosVencidos(hoy)).equals(List.of(a.getId())));
+
         List<Cliente> morosos = reportes.clientesMorosos(hoy);
         verificar("morosos: solo el cliente Uno, sin repetir", morosos.size() == 1 && morosos.get(0).getId() == ana.getId());
         verificar("antes de la primera cuota no hay vencidos", reportes.prestamosVencidos(LocalDate.of(2026, 1, 10)).isEmpty());

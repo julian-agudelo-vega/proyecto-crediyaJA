@@ -64,7 +64,7 @@ public class Prestamo {
         }
         if (interes == null || interes.signum() < 0 || interes.compareTo(MAX_INTERES) > 0) {
             throw new DatosInvalidosException("El interés es inválido.");
-        }
+        }   
         if (!CUOTAS_PERMITIDAS.contains(cuotas)) {
             throw new CuotasInvalidasException(
                     "Cantidad de cuotas inválida (" + cuotas + "). Solo se permiten 3, 6 o 12.");
