@@ -73,6 +73,21 @@ Abre `src/test/java/com/julianagudelo/crediya/PruebasCrediYa.java` y ejecuta su 
 (cálculos, reglas de pago, vencimientos, persistencia en archivos y reportes). No usa librerías externas y trabaja en
 carpetas temporales, así que no toca tu carpeta `data/`.
 
+### Probar el gestor de préstamos
+
+La prueba específica del gestor está en `src/test/java/com/julianagudelo/crediya/PruebaGestorPrestamos.java`.
+Usa préstamos y repositorios temporales: no necesita MySQL, no lee TXT creados manualmente y no modifica `data/`.
+
+En PowerShell, desde la carpeta que contiene `pom.xml`, ejecuta:
+
+```powershell
+mvn test-compile
+java -cp "target\classes;target\test-classes" com.julianagudelo.crediya.PruebaGestorPrestamos
+```
+
+Si todo funciona, verás tres mensajes `OK` y `Prueba del gestor completada correctamente.`.
+La prueba verifica que el gestor cargue préstamos, liste los pendientes y detecte los vencidos.
+
 ## Estructura del proyecto
 
 ```
@@ -97,7 +112,8 @@ proyecto-crediyaJA/
     │   ├── util/                  Validaciones, Formato, Consola, ConexionBD
     │   └── ui/                    menús de consola
     └── test/java/com/julianagudelo/crediya/
-        └── PruebasCrediYa.java    pruebas automáticas
+        ├── PruebasCrediYa.java          pruebas automáticas de la aplicación
+        └── PruebaGestorPrestamos.java   prueba específica del gestor
 ```
 
 ## Funcionalidades
@@ -205,22 +221,3 @@ Los datos de conexión salen de `config.properties`.
 
 - Diagrama UML: [`docs/uml-clases.md`](docs/uml-clases.md)
 - Subir el proyecto a GitHub: [`docs/GITHUB.md`](docs/GITHUB.md)
-
-## ¿Qué se hizo en esta sesión?
-
-Se implementó la carga de datos de ejemplo para persistencia MySQL, que anteriormente mostraba el mensaje **"Carga de datos de ejemplo para MySQL no implementada en esta versión."**
-
-Ahora el sistema:
-
-1. **Inserta datos automáticamente** al elegir MySQL y aceptar datos de ejemplo
-2. **Incluye 2 empleados**: María González (Gerente, salario $5,000,000) y Carlos Rodríguez (Asesor, salario $3,000,000)
-3. **Incluye 3 clientes**: Ana Martínez, Pedro Sánchez, Laura Gómez
-4. **Incluye 3 préstamos** con diferentes estados:
-   - Préstamo A: $1,000,000, 3 cuotas, PENDIENTE (2 pagos realizados)
-   - Préstamo B: $600,000, 6 cuotas, PENDIENTE (0 pagos)
-   - Préstamo C: $900,000, 3 cuotas, PAGADO (3 pagos completos)
-5. **Incluye 5 pagos** asociados a los préstamos con sus respectivos comprobantes
-6. **Utiliza sentencias SQL directas** con `DELETE FROM` al inicio para evitar errores de entradas duplicadas
-7. **Muestra el mensaje**: "Datos de ejemplo cargados exitosamente en MySQL."
-
-El flujo es: ejecutar programa → elegir "2. Base de datos MySQL" → elegir "1. Sí" a datos de ejemplo → ver mensaje de éxito → acceder al menú principal con todas las opciones (Empleados, Clientes, Préstamos, Pagos, Reportes).
