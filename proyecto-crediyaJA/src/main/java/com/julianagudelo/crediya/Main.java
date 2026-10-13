@@ -150,16 +150,16 @@ private static void insertarDatosEjemploMySQL() throws PersistenciaException {
                 stmt.executeUpdate("INSERT INTO prestamos (id, cliente_id, empleado_id, monto, interes, cuotas, fecha_inicio, estado) VALUES (3, 3, 1, 900000.00, 10.00, 3, '2026-03-01', 'PAGADO')");
 
                 // 4. Pagos
-                // Préstamo A: 2 pagos (366,666.67 y 366,666.66)
+                // Préstamo A: 2 pagos (cuota 1 y 2 normales; cuota 3 queda pendiente)
                 stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (1, 1, '2026-02-05', 366666.67, 'NC-001')");
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (2, 1, '2026-03-05', 366666.66, 'NC-002')");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (2, 1, '2026-03-05', 366666.67, 'NC-002')");
 
                 // Préstamo B: sin pagos (no insertamos registros en la tabla pagos para ese préstamo)
 
-                // Préstamo C: 3 pagos completos (valores que suman 1,000,000)
+                // Préstamo C: 3 pagos completos (900,000 + 10% = 990,000 / 3 = 330,000 c/u)
                 stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (3, 3, '2026-04-05', 330000.00, 'NC-003')");
                 stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (4, 3, '2026-05-05', 330000.00, 'NC-004')");
-                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (5, 3, '2026-06-05', 340000.00, 'NC-005')");
+                stmt.executeUpdate("INSERT INTO pagos (id, prestamo_id, fecha_pago, monto, numero_comprobante) VALUES (5, 3, '2026-06-05', 330000.00, 'NC-005')");
 
                 System.out.println("Datos de ejemplo cargados exitosamente en MySQL.");
             }
